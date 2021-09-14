@@ -33,9 +33,6 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     return [];
   });
 
-  console.log(cart)
-
-
   const addProduct = async (productId: number) => {
     try {
       const response = await api.get(`/stock/${productId}`)
@@ -81,9 +78,23 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const removeProduct = (productId: number) => {
     try {
-      // TODO
+      const newCart = cart.map(product => {
+        if (product.id === productId) {
+          return {
+            ...product,
+            amount: product.amount - 1
+          }
+        }
+
+        return product
+      })
+
+      setCart(newCart)
+      localStorage.setItem('@RocketShoes:cart', JSON.stringify(newCart))
+
+      toast.success('Quantidade atualizada')
     } catch {
-      // TODO
+      toast.error('Erro na remoção do produto');
     }
   };
 
