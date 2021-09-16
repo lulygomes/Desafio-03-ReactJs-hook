@@ -77,19 +77,13 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     }
   };
 
-  const removeProduct = (productId: number) => {
+  const removeProduct = async (productId: number) => {
     try {
-       
-      const newCart = cart.map(product => {
-        if (product.id === productId) {
-          return {
-            ...product,
-            amount: product.amount - 1
-          }
-        }
+      const { data } = await api.get(`/stock/${productId}`)
 
-        return product
-      })
+      if (!data) throw new Error()
+
+      const newCart = cart.filter(product => product.id !== productId)
 
       setCart(newCart)
       localStorage.setItem('@RocketShoes:cart', JSON.stringify(newCart))
@@ -105,15 +99,15 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     amount,
   }: UpdateProductAmount) => {
     try {
-      if(amount <= 0) throw Error()
+      if(amount === 0) throw Error()
 
       const { data } = await api.get(`/stock/${productId}`)
       if (!data) throw new Error()
-      const productInStock: Stock = data
+      const productsInStock: Stock = data
 
       const [productInCart] = cart.filter(item => item.id === productId)
 
-      if ((amount + productInCart.amount) > productInStock.amount) {
+      if ((amount + productInCart.amount) > productsInStock.amount) {
         toast.error('Quantidade solicitada fora de estoque')
         return
       }
@@ -122,7 +116,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
         if(item.id === productInCart.id) {
           return {
             ...productInCart,
-            amount: productInCart.amount + 1
+            amount: productInCart.amount + amount
           }
         }
 

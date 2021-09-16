@@ -25,8 +25,6 @@ interface ProductFormated extends Product {
 const Cart = (): JSX.Element => {
   const { cart, removeProduct, updateProductAmount } = useCart();
 
-  console.log(cart)
-
   const cartFormatted = cart.map(product => ({
     ...product,
     total: formatPrice(product.amount * product.price),
@@ -44,11 +42,11 @@ const Cart = (): JSX.Element => {
   }
 
   function handleProductDecrement(product: Product) {
-    removeProduct(product.id)
+    updateProductAmount({productId: product.id, amount: -1 })
   }
 
   function handleRemoveProduct(productId: number) {
-    // TODO
+    removeProduct(productId)
   }
 
   return (
