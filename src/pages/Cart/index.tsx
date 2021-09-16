@@ -23,7 +23,7 @@ interface ProductFormated extends Product {
 }
 
 const Cart = (): JSX.Element => {
-  const { cart, addProduct, removeProduct, updateProductAmount } = useCart();
+  const { cart, removeProduct, updateProductAmount } = useCart();
 
   console.log(cart)
 
@@ -40,7 +40,7 @@ const Cart = (): JSX.Element => {
     )
 
   async function handleProductIncrement(product: Product) {
-    await addProduct(product.id)
+    updateProductAmount({productId: product.id, amount: 1 })
   }
 
   function handleProductDecrement(product: Product) {
